@@ -1,0 +1,8 @@
+#pcm-overlay { position: fixed; inset:0; background: rgba(0,0,0,0.6); display:flex; align-items:center; justify-content:center; z-index:99999; }
+.pcm-hidden { display:none; }
+#pcm-modal { width: 360px; border-radius:10px; padding:20px; box-shadow:0 8px 30px rgba(0,0,0,0.2); position:relative; }
+#pcm-modal .pcm-title { margin:0 0 10px 0; font-size:18px; }
+#pcm-modal input[type=text] { width:100%; padding:10px; margin-bottom:10px; border:1px solid #ddd; border-radius:4px; box-sizing:border-box; }
+#pcm-modal button { padding:10px 16px; border:none; border-radius:4px; background:#0073aa; color:#fff; cursor:pointer; }
+#pcm-close { position:absolute; right:8px; top:6px; background:transparent; border:none; font-size:20px; cursor:pointer; }
+.pcm-note { font-size:12px; color:#666; margin-top:8px; }

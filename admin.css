@@ -1,0 +1,4 @@
+#pcm-analytics { margin-top:20px; }
+.pcm-cards { display:flex; gap:16px; margin-bottom:16px; }
+.pcm-card { background:#fff; padding:12px 16px; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.06); }
+.pcm-card strong { display:block; font-size:20px; }
