@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Plugin Name: Phone Capture Modal
  * Description: Exibe um modal solicitando o número de telefone e registra cada post visualizado pelo usuário no painel do plugin.
@@ -8,10 +9,12 @@
 
 if (!defined('ABSPATH')) exit;
 
-class PhoneCaptureModal {
+class PhoneCaptureModal
+{
     private $table;
 
-    public function __construct() {
+    public function __construct()
+    {
         global $wpdb;
         $this->table = $wpdb->prefix . 'phone_capture_views';
 
@@ -27,7 +30,8 @@ class PhoneCaptureModal {
         add_action('admin_enqueue_scripts', [$this, 'admin_enqueue_scripts']);
     }
 
-    public static function activate() {
+    public static function activate()
+    {
         global $wpdb;
         $table = $wpdb->prefix . 'phone_capture_views';
         $charset_collate = $wpdb->get_charset_collate();
@@ -44,7 +48,8 @@ class PhoneCaptureModal {
         dbDelta($sql);
     }
 
-    public function enqueue_scripts() {
+    public function enqueue_scripts()
+    {
         // Frontend JS and CSS
         wp_enqueue_script('phone-capture-js', plugin_dir_url(__FILE__) . 'script.js', array('jquery'), null, true);
         wp_enqueue_style('phone-capture-css', plugin_dir_url(__FILE__) . 'style.css');
@@ -55,7 +60,8 @@ class PhoneCaptureModal {
         ));
     }
 
-    public function admin_enqueue_scripts($hook) {
+    public function admin_enqueue_scripts($hook)
+    {
         if (strpos($hook, 'phone-capture') === false && strpos($hook, 'toplevel_page_phone-capture') === false) return;
         // Chart.js from CDN
         wp_enqueue_script('chartjs', 'https://cdn.jsdelivr.net/npm/chart.js', array(), null, true);
@@ -69,21 +75,22 @@ class PhoneCaptureModal {
         ));
     }
 
-    public function render_modal() {
+    public function render_modal()
+    {
 
-    if (isset($_COOKIE['phone_capture']) && !empty($_COOKIE['phone_capture'])) {
-        return;
-    }
+        if (isset($_COOKIE['phone_capture']) && !empty($_COOKIE['phone_capture'])) {
+            return;
+        }
 
         // Only show if phone not present in cookie/localStorage
         $options = get_option('pcm_options', array());
 
-         $auto_show = isset($options['auto_show']) ? $options['auto_show'] : 1;
+        $auto_show = isset($options['auto_show']) ? $options['auto_show'] : 1;
 
-    // impede exibição se admin desativou
-    if (!$auto_show) {
-        return;
-    }
+        // impede exibição se admin desativou
+        if (!$auto_show) {
+            return;
+        }
 
 
         $title = !empty($options['title']) ? esc_html($options['title']) : 'Digite seu número de WhatsApp';
@@ -108,7 +115,8 @@ class PhoneCaptureModal {
         ";
     }
 
-    public function handle_phone_submit() {
+    public function handle_phone_submit()
+    {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') return;
         if (isset($_POST['phone_capture']) && !empty($_POST['phone_capture']) && isset($_POST['pcm_nonce']) && wp_verify_nonce($_POST['pcm_nonce'], 'pcm_submit')) {
             $phone = sanitize_text_field($_POST['phone_capture']);
@@ -123,12 +131,13 @@ class PhoneCaptureModal {
                 $this->insert_view_record($digits, get_queried_object_id());
             }
 
-            wp_safe_redirect(remove_query_arg(array('phone_capture','pcm_nonce')));
+            wp_safe_redirect(remove_query_arg(array('phone_capture', 'pcm_nonce')));
             exit;
         }
     }
 
-    public function track_post_view() {
+    public function track_post_view()
+    {
         if (is_single() && isset($_COOKIE['phone_capture'])) {
             $phone = sanitize_text_field($_COOKIE['phone_capture']);
             if (!empty($phone)) {
@@ -137,7 +146,8 @@ class PhoneCaptureModal {
         }
     }
 
-    private function insert_view_record($phone, $post_id) {
+    private function insert_view_record($phone, $post_id)
+    {
         global $wpdb;
         $table = $this->table;
         $wpdb->insert($table, array(
@@ -147,11 +157,13 @@ class PhoneCaptureModal {
         ));
     }
 
-    public function admin_menu() {
+    public function admin_menu()
+    {
         add_menu_page('Phone Capture', 'Phone Capture', 'manage_options', 'phone-capture', array($this, 'admin_page'), 'dashicons-phone');
     }
 
-    public function admin_page() {
+    public function admin_page()
+    {
         if (!current_user_can('manage_options')) return;
         $options = get_option('pcm_options', array());
 
@@ -236,7 +248,8 @@ class PhoneCaptureModal {
         echo "<script>var pcmChartLabels=" . json_encode($labels) . "; var pcmChartData=" . json_encode($data) . ";</script>";
     }
 
-    public function export_csv() {
+    public function export_csv()
+    {
         if (!current_user_can('manage_options')) wp_die('Permissão negada');
         global $wpdb;
         $rows = $wpdb->get_results("SELECT * FROM {$this->table} ORDER BY viewed_at DESC");
@@ -253,7 +266,8 @@ class PhoneCaptureModal {
         exit;
     }
 
-    public function save_settings() {
+    public function save_settings()
+    {
         if (!current_user_can('manage_options')) wp_die('Permissão negada');
         check_admin_referer('pcm_save_settings');
         $opts = isset($_POST['pcm_options']) ? $_POST['pcm_options'] : array();
