@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Phone Capture Modal
  * Description: Exibe um modal solicitando o número de telefone e registra cada post visualizado pelo usuário no painel do plugin.
- * Version: 2.0
+ * Version: 1.1
  * Author: RaulRodrigues
  */
 
@@ -70,8 +70,22 @@ class PhoneCaptureModal {
     }
 
     public function render_modal() {
+
+    if (isset($_COOKIE['phone_capture']) && !empty($_COOKIE['phone_capture'])) {
+        return;
+    }
+
         // Only show if phone not present in cookie/localStorage
         $options = get_option('pcm_options', array());
+
+         $auto_show = isset($options['auto_show']) ? $options['auto_show'] : 1;
+
+    // impede exibição se admin desativou
+    if (!$auto_show) {
+        return;
+    }
+
+
         $title = !empty($options['title']) ? esc_html($options['title']) : 'Digite seu número de WhatsApp';
         $placeholder = !empty($options['placeholder']) ? esc_attr($options['placeholder']) : '(00) 00000-0000';
         $button_text = !empty($options['button_text']) ? esc_html($options['button_text']) : 'Enviar';
